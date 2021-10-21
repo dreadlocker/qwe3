@@ -1,65 +1,87 @@
 <template>
   <div>
     <button @click="goBack" v-if="isAuth" class="back-btn">Назад</button>
-    <div v-for="category in Object.keys(filteredProducts)" :key="category">
-      <div v-if="filteredProducts[category].length > 0">
-        <hr />
-        <h1>{{ category }}</h1>
-        <hr />
-        <div class="cards-holder">
+    <template v-if="hasSomeProducts">
+      <div v-for="category in Object.keys(filteredProducts)" :key="category">
+        <div>
+          <hr />
+          <h1>{{ category }}</h1>
+          <hr />
           <div
-            v-for="product in filteredProducts[category]"
-            :key="product.id"
-            class="card"
+            v-if="filteredProducts[category].length > 0"
+            class="cards-holder"
           >
-            <div class="img-holder">
-              <div
-                :style="{ backgroundImage: `url(${product.imageUrl})` }"
-                class="img"
-              ></div>
-            </div>
-            <div class="content-holder">
-              <div v-if="isAuth" class="row-holder">
-                <div class="text-holder">Марка:</div>
-                <!-- TODO: kato editva6 1 prodykt se editvat vsi4ki -->
-                <input v-model="brandName" class="inp-edit" type="text" />
+            <div
+              v-for="product in filteredProducts[category]"
+              :key="product.id"
+              class="card"
+            >
+              <div class="img-holder">
+                <div
+                  :style="{
+                    backgroundImage: `${
+                      product.imageUrl
+                        ? `url(${baseURL}/${product.imageUrl})`
+                        : ''
+                    }`,
+                  }"
+                  class="img"
+                ></div>
               </div>
-              <div v-else>
-                <span>Марка: </span>
-                <span class="info-2">{{ product.brandName }}</span>
-              </div>
-              <div v-if="isAuth" class="row-holder">
-                <div class="text-holder">Цена:</div>
-                <input v-model="price" class="inp-edit" type="number" />
-              </div>
-              <div v-else>
-                <span class="text-holder">Цена: </span>
-                <span class="info-2">{{ product.price }}</span>
-                <span v-if="!isAuth"> лв.</span>
-              </div>
-              <div v-if="isAuth" class="row-holder new-image">
+              <div class="content-holder">
+                <div v-if="isAuth" class="row-holder">
+                  <div class="text-holder">Марка:</div>
+                  <!-- TODO: when you edit 1 product it edits all of them -->
+                  <input v-model="brandName" class="inp-edit" type="text" />
+                </div>
+                <div v-else>
+                  <span>Марка: </span>
+                  <span class="info-2">{{ product.brandName }}</span>
+                </div>
+                <div v-if="isAuth" class="row-holder">
+                  <div class="text-holder">Цена:</div>
+                  <input v-model="price" class="inp-edit" type="number" />
+                </div>
+                <div v-else>
+                  <span class="text-holder">Цена: </span>
+                  <span class="info-2">{{ product.price }}</span>
+                  <span v-if="!isAuth"> лв.</span>
+                </div>
+                <!-- If we want to upload a new image -->
+                <!-- <div v-if="isAuth" class="row-holder new-image">
                 <div class="text-holder">Снимка:</div>
-                <input v-model="imageUrl" class="inp-edit" type="text" />
-                <!-- <input class="inp-edit" type="file" name="file" id="file" /> -->
-              </div>
-              <div class="btns-holder">
-                <button
-                  @click="deleteProduct(product._id, product.category)"
-                  v-if="isAuth"
-                  class="delete-btn"
-                >
-                  Изтрий
-                </button>
-                <button @click="editProduct(product._id)" v-if="isAuth">
-                  Запази
-                </button>
+                <input
+                  ref="file"
+                  @change="previewFiles"
+                  type="file"
+                  name="image"
+                  id="image"
+                  class="inp-edit"
+                />
+              </div> -->
+                <div class="btns-holder">
+                  <button
+                    @click="deleteProduct(product._id, product.category)"
+                    v-if="isAuth"
+                    class="delete-btn"
+                  >
+                    Изтрий
+                  </button>
+                  <button @click="editProduct(product._id)" v-if="isAuth">
+                    Запази
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+          <h3 v-else>Няма налични продукти</h3>
         </div>
       </div>
-      <h1 v-else>Няма налични продукти</h1>
-    </div>
+    </template>
+    <template v-else>
+      <h1>Сайтът се обновява.</h1>
+      <h3>Моля, посетете ни по-късно.</h3>
+    </template>
     <div v-if="!isAuth" class="ghost-holder">
       <div @click="showLoginPage" class="ghost"></div>
     </div>
@@ -67,27 +89,37 @@
 </template>
 
 <script>
-// TODO: da iztriq nenyjniq kod
 import { mapState } from "vuex";
 import axios from "axios";
+import _ from "lodash";
 import { BASE_API_URL } from "@/utils/helper.js";
+import { baseURL } from "@/utils/helper.js";
+import { configUrlEncoded } from "@/utils/helper.js";
 
 export default {
   name: "Products",
   computed: {
     ...mapState({
       filteredProducts: (state) => state.filteredProducts,
-      categories: (state) => state.categories,
       adminStep: (state) => state.adminStep,
       isAuth: (state) => state.isAuth,
       allProducts: (state) => state.allProducts,
     }),
+    baseURL() {
+      return baseURL;
+    },
+    hasSomeProducts() {
+      return Object.values(this.allProducts)
+        .map((productsByCategory) => productsByCategory.length > 0)
+        .some((bool) => bool);
+    },
   },
   data() {
     return {
       brandName: "",
       price: "",
-      imageUrl: "",
+      // If we want to upload a new image
+      // image: null,
     };
   },
   methods: {
@@ -116,27 +148,67 @@ export default {
           });
       }
     },
-    editProduct(productId) {
+    async editProduct(productId) {
       const params = {
         params: {
           brandName: this.brandName,
           price: Number(this.price),
-          imageUrl: this.imageUrl,
         },
       };
 
-      axios
-        .put(`${BASE_API_URL}products/${productId}`, params)
-        .then(() => {
+      if (this.brandName !== "" || this.price !== "") {
+        const firstResponse = await axios.put(
+          `${BASE_API_URL}products/${productId}`,
+          params.params,
+          configUrlEncoded
+        );
+
+        let currentImagePath = "";
+        if (firstResponse) {
+          const { brandName, category, price, _id, imageUrl } =
+            firstResponse.data[0];
           this.brandName = "";
           this.price = "";
-          this.imageUrl = "";
-          alert("Продуктът беше обновен.");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          currentImagePath = imageUrl;
+
+          const allProductsClone = _.cloneDeep(this.allProducts);
+          allProductsClone[category].forEach((product) => {
+            if (product._id === _id) {
+              product.brandName = brandName;
+              product.price = price;
+            }
+          });
+
+          this.$store.commit("saveAllProducts", allProductsClone);
+        }
+
+        alert("Продуктът беше обновен");
+      }
+
+      // // Not finished - If we want to upload a new image
+      // let secondResponse = null;
+      // if (this.image) {
+      //   secondResponse = await axios.put(
+      //     `${BASE_API_URL}products/${productId}`,
+      //     this.image, configFormData
+      //   );
+      // }
+      // if (secondResponse) {
+      //   console.log(secondResponse);
+      // }
     },
+    // // If we want to upload a new image
+    // previewFiles(event) {
+    //   const file = event.target.files[0];
+    //   if (file.size > 5000000) {
+    //     alert("Изберете по-малък файл от 5MB!");
+    //     return;
+    //   }
+
+    //   const formData = new FormData();
+    //   formData.append("image", file);
+    //   this.image = formData;
+    // },
     goBack() {
       this.$store.commit("adminStepChange", 2);
     },
@@ -224,21 +296,15 @@ $row-holder-width: 95%;
     }
   }
 }
-.footer {
-  width: 100%;
-  height: $footer-height;
-}
 .ghost-holder {
   display: flex;
 
   .ghost {
     width: 20px;
     height: 20px;
-    // TODO: uncomment
-    border: 1px solid red;
-    // background-color: transparent;
-    // color: transparent;
-    // border: transparent;
+    background-color: transparent;
+    color: transparent;
+    border: transparent;
   }
 }
 

@@ -37,9 +37,6 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      allProducts: (state) => state.allProducts,
-    }),
     dropdownValue() {
       const dropdownValue = this.$store.state.dropdownValue;
       return dropdownValue ? dropdownValue : filterAll;

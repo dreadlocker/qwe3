@@ -12,6 +12,7 @@ import axios from "axios";
 import { BASE_API_URL } from "@/utils/helper.js";
 import Dropdown from "@/components/Dropdown.vue";
 import { mapState } from "vuex";
+import { configUrlEncoded } from "@/utils/helper.js";
 
 export default {
   name: "AddCategory",
@@ -33,13 +34,11 @@ export default {
       if (!this.name) return;
 
       const params = {
-        params: {
-          name: this.name,
-        },
+        name: this.name,
       };
 
       axios
-        .post(`${BASE_API_URL}categories`, params)
+        .post(`${BASE_API_URL}categories`, params, configUrlEncoded)
         .then(({ data }) => {
           this.name = "";
           this.$store.commit("saveCategories", data);

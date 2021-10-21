@@ -15,14 +15,13 @@
         ИЗТРИВАНЕ НА ВСИЧКИ КАТЕГОРИИ
       </button>
     </div>
-    <button @click="changeStep(0)" class="btn-edit">
+    <button @click="changeStep(0, true)" class="btn-edit">
       Промяна на вече съществуващи елементи
     </button>
   </div>
 </template>
 
 <script>
-// TODO: tozi komponent ne6to gurmi
 import axios from "axios";
 import { BASE_API_URL } from "@/utils/helper.js";
 import Dropdown from "@/components/Dropdown.vue";
@@ -39,8 +38,9 @@ export default {
     };
   },
   methods: {
-    changeStep(step) {
+    changeStep(step, setAuth) {
       this.$store.commit("adminStepChange", step);
+      if (setAuth) this.$store.commit("onIsAuthChange", true);
     },
     deleteAllCategories() {
       const condition = confirm(

@@ -27,57 +27,17 @@ export default {
       categories: (state) => state.categories,
     }),
   },
-  data() {
-    return {
-      // url: "https://qwer-3d393-default-rtdb.europe-west1.firebasedatabase.app/.json",
-      // postArgs: {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify([{}]),
-      // },
-    };
-  },
   methods: {
-    // TODO: kato vzimam vsi4ki prodykti da proverqvam dali nqma nesu6estvyva6ta kategoriq 4e moje da hvurli gre6ka
     getCategories() {
       axios
         .get(`${BASE_API_URL}categories`)
         .then(({ data }) => {
-          // TODO: tova da se sloji sled vsi4ki zaqvki
           const categories = data.data.map((category) => category.name);
           this.$store.commit("saveCategories", categories);
         })
         .catch((err) => {
           console.log(err);
         });
-
-      //   fetch(this.url)
-      //     .then((response) => response.json())
-      //     .then((response) => {
-      //       this.showLoader = false;
-      //       response = response.map(category => ({
-      //         label: category.label,
-      //         products: category.products.filter(product => product),
-      //       }))
-      //       this.$store.commit("saveCategories", response);
-      //       this.$store.commit("saveFilteredProducts");
-      //     });
-      // },
-
-      // sendData() {
-      //   fetch(`${this.url}?auth=${this.token}`, this.postArgs)
-      //     .then((response) => response.json())
-      //     .then(({ name }) => {
-      //       this.showLoader = false;
-      //     });
-      // },
-      // deleteData() {
-      //   fetch(`${this.url}?auth=${this.token}`, {
-      //     method: "DELETE",
-      //   }).then((response) => {
-      //     this.showLoader = false;
-      //   });
-      // },
     },
     getProducts() {
       axios

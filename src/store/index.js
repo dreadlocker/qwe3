@@ -7,7 +7,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     categories: [],
-    allProducts: [],
+    allProducts: {},
     filteredProducts: [],
     dropdownValue: null,
     isAuth: false,

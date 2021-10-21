@@ -1,16 +1,20 @@
 <template>
   <div class="wrapper">
     <h3>Добавяне на продукт</h3>
-    <label for="category">Категория</label>
-    <Dropdown :hideText="true" id="category" />
     <label for="brandName">Име</label>
     <input v-model="brandName" id="brandName" type="text" autofocus />
     <label for="price">Цена</label>
     <input v-model="price" id="price" type="text" />
-    <label for="imageUrl">Снимка</label>
-    <!-- TODO: multer -->
-    <!-- <input type="file" name="imageUrl" id="imageUrl" /> -->
-    <input v-model="imageUrl" id="imageUrl" type="text" />
+    <label for="image">Снимка</label>
+    <input
+      ref="file"
+      @change="previewFiles"
+      type="file"
+      name="image"
+      id="image"
+    />
+    <label for="category" class="category-label">Категория</label>
+    <Dropdown :hideText="true" id="category" />
     <button @click.prevent="submit" class="btn">Създай</button>
     <button @click="goBack" class="btn">Назад</button>
   </div>
@@ -22,6 +26,7 @@ import { BASE_API_URL } from "@/utils/helper.js";
 import Dropdown from "@/components/Dropdown.vue";
 import { mapState } from "vuex";
 import { filterAll } from "@/assets/constants.js";
+import { configUrlEncoded, configFormData } from "@/utils/helper.js";
 
 export default {
   name: "AddProduct",
@@ -40,20 +45,20 @@ export default {
       category: "",
       brandName: "",
       price: "",
-      imageUrl: "",
+      image: "",
     };
   },
   methods: {
     goBack() {
       this.$store.commit("adminStepChange", this.adminStep - 2);
     },
-    submit(e) {
+    async submit(e) {
       if (
         this.dropdownValue === this.filterAll ||
         !this.dropdownValue ||
         !this.brandName ||
         !this.price ||
-        !this.imageUrl
+        !this.image
       ) {
         alert("Има не попълнени полета!");
         return;
@@ -69,25 +74,39 @@ export default {
         params: {
           category: this.dropdownValue,
           brandName: this.brandName,
-          imageUrl: this.imageUrl,
           price: price,
         },
       };
 
-      axios
-        .post(`${BASE_API_URL}products`, params)
-        .then(({ data }) => {
-          this.$store.commit("saveDropdownSelect", this.filterAll);
-          this.category = "";
-          this.brandName = "";
-          this.imageUrl = "";
-          this.price = "";
-          this.$store.commit("saveAllProducts", data);
-          alert("Продуктът беше добавен");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      const [firstResponse, secondResponse] = await Promise.all([
+        axios.post(`${BASE_API_URL}products`, params.params, configUrlEncoded),
+        axios.post(`${BASE_API_URL}products`, this.image, configFormData),
+      ]);
+
+      if (firstResponse && secondResponse) {
+        this.category = "";
+        this.brandName = "";
+        this.image = "";
+        this.price = "";
+        this.$refs.file.value = "";
+        this.$store.commit("saveDropdownSelect", this.filterAll);
+        this.$store.commit("saveAllProducts", secondResponse.data);
+        alert("Продуктът беше добавен");
+      } else {
+        console.log("Some error!");
+        throw new Error("Some error!");
+      }
+    },
+    previewFiles(event) {
+      const file = event.target.files[0];
+      if (file.size > 5000000) {
+        alert("Изберете по-малък файл от 5MB!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", file);
+      this.image = formData;
     },
   },
 };
@@ -101,6 +120,9 @@ export default {
   justify-content: center;
   align-items: center;
 
+  .category-label {
+    margin-top: 15px;
+  }
   #category {
     margin: 5px 0 10px 0;
   }

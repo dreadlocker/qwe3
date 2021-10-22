@@ -1,11 +1,11 @@
 import axios from "axios";
 
-// for local test
-export const baseURL = axios.defaults.baseURL = 'http://localhost:3000';
+// // for local test
+// export const baseURL = axios.defaults.baseURL = 'http://localhost:3000/';
 // // FOR PRODUCTION
-// const baseURL = axios.defaults.baseURL = 'https://dreadlocker.github.io/qwe4';
+const baseURL = axios.defaults.baseURL = 'https://bqla-tehnika2.herokuapp.com/';
 
-export const BASE_API_URL = `${baseURL}/api/`
+export const BASE_API_URL = `${baseURL}`
 export const configUrlEncoded = {
   headers: { "content-type": "application/x-www-form-urlencoded" },
 }

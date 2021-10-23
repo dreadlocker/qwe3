@@ -2,7 +2,7 @@
   <div>
     <Dropdown v-if="!adminStep && allProducts.length > 0" />
     <Products v-if="adminStep === 0" />
-    <Login v-if="isAuth && adminStep === 1" />
+    <Login v-if="adminStep === 1" />
     <CategoriesEdit v-if="isAuth && adminStep === 2" />
     <AddCategory v-if="isAuth && adminStep === 3" />
     <AddProduct v-if="isAuth && adminStep === 4" />

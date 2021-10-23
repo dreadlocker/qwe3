@@ -158,6 +158,7 @@ export default {
       };
 
       if (this.brandName !== "" || this.price !== "") {
+        this.$store.commit("showLoaderChange", true);
         const firstResponse = await axios.put(
           `${BASE_API_URL}products/${productId}`,
           params.params,
@@ -166,6 +167,7 @@ export default {
 
         let currentImagePath = "";
         if (firstResponse) {
+          this.$store.commit("showLoaderChange", false);
           const { brandName, category, price, _id, imageUrl } =
             firstResponse.data[0];
           this.brandName = "";

@@ -11,7 +11,7 @@ export default new Vuex.Store({
     filteredProducts: [],
     dropdownValue: null,
     isAuth: true,
-    adminStep: 0,
+    adminStep: 3,
     showLoader: true,
   },
   mutations: {

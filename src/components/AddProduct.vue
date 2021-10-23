@@ -16,7 +16,7 @@
     <input v-model="imageUrl" id="image" type="text" name="image" />
     <label for="category" class="category-label">Категория</label>
     <Dropdown :hideText="true" id="category" />
-    <button @click.prevent.once="submit" class="btn">Създай</button>
+    <button @click.prevent="submit" class="btn">Създай</button>
     <button @click="goBack" class="btn">Назад</button>
   </div>
 </template>

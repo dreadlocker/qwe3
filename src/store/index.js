@@ -10,8 +10,8 @@ export default new Vuex.Store({
     allProducts: {},
     filteredProducts: [],
     dropdownValue: null,
-    isAuth: true,
-    adminStep: 3,
+    isAuth: false,
+    adminStep: 0,
     showLoader: true,
   },
   mutations: {

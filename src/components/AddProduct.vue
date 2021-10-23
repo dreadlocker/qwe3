@@ -6,13 +6,14 @@
     <label for="price">Цена</label>
     <input v-model="price" id="price" type="text" />
     <label for="image">Снимка</label>
-    <input
+    <!-- <input
       ref="file"
       @change="previewFiles"
       type="file"
       name="image"
       id="image"
-    />
+    /> -->
+    <input v-model="imageUrl" id="image" type="text" name="image" />
     <label for="category" class="category-label">Категория</label>
     <Dropdown :hideText="true" id="category" />
     <button @click.prevent="submit" class="btn">Създай</button>
@@ -26,7 +27,7 @@ import { BASE_API_URL } from "@/utils/helper.js";
 import Dropdown from "@/components/Dropdown.vue";
 import { mapState } from "vuex";
 import { filterAll } from "@/assets/constants.js";
-import { configUrlEncoded, configFormData } from "@/utils/helper.js";
+import { configUrlEncoded } from "@/utils/helper.js";
 
 export default {
   name: "AddProduct",
@@ -42,10 +43,14 @@ export default {
   data() {
     return {
       filterAll: filterAll,
-      category: "",
-      brandName: "",
-      price: "",
-      image: "",
+      // category: "",
+      category: "Хладилници",
+      // brandName: "",
+      brandName: "a",
+      // price: "",
+      price: 1,
+      // image: "",
+      imageUrl: "imageUrl.imageUrl",
     };
   },
   methods: {
@@ -58,7 +63,8 @@ export default {
         !this.dropdownValue ||
         !this.brandName ||
         !this.price ||
-        !this.image
+        !this.imageUrl
+        // !this.image
       ) {
         alert("Има не попълнени полета!");
         return;
@@ -75,39 +81,45 @@ export default {
           category: this.dropdownValue,
           brandName: this.brandName,
           price: price,
+          imageUrl: this.imageUrl,
         },
       };
 
-      const [firstResponse, secondResponse] = await Promise.all([
-        axios.post(`${BASE_API_URL}products`, params.params, configUrlEncoded),
-        axios.post(`${BASE_API_URL}products`, this.image, configFormData),
-      ]);
+      // const [firstResponse, secondResponse] = await Promise.all([
+      //   axios.post(`${BASE_API_URL}products`, params.params, configUrlEncoded),
+      //   axios.post(`${BASE_API_URL}products`, this.image, configFormData),
+      // ]);
 
-      if (firstResponse && secondResponse) {
-        this.category = "";
-        this.brandName = "";
-        this.image = "";
-        this.price = "";
-        this.$refs.file.value = "";
-        this.$store.commit("saveDropdownSelect", this.filterAll);
-        this.$store.commit("saveAllProducts", secondResponse.data);
-        alert("Продуктът беше добавен");
-      } else {
-        console.log("Some error!");
-        throw new Error("Some error!");
-      }
+      axios
+        .post(`${BASE_API_URL}products`, params.params, configUrlEncoded)
+        .then(({ data }) => {
+          this.category = "";
+          this.brandName = "";
+          this.imageUrl = "";
+          this.price = "";
+          // this.image = "";
+          // this.$refs.file.value = "";
+          // this.$store.commit("saveAllProducts", secondResponse.data);
+          this.$store.commit("saveDropdownSelect", this.filterAll);
+          this.$store.commit("saveAllProducts", data);
+          alert("Продуктът беше добавен");
+        })
+        .catch((err) => {
+          console.log("Some error!");
+          throw new Error(err);
+        });
     },
-    previewFiles(event) {
-      const file = event.target.files[0];
-      if (file.size > 5000000) {
-        alert("Изберете по-малък файл от 5MB!");
-        return;
-      }
+    // previewFiles(event) {
+    //   const file = event.target.files[0];
+    //   if (file.size > 5000000) {
+    //     alert("Изберете по-малък файл от 5MB!");
+    //     return;
+    //   }
 
-      const formData = new FormData();
-      formData.append("image", file);
-      this.image = formData;
-    },
+    //   const formData = new FormData();
+    //   formData.append("image", file);
+    //   this.image = formData;
+    // },
   },
 };
 </script>

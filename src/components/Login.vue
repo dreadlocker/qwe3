@@ -39,6 +39,7 @@ export default {
       axios
         .get(`${BASE_API_URL}users`, params)
         .then(({ data }) => {
+          this.$store.commit("onIsAuthChange", true);
           this.$store.commit("adminStepChange", this.adminStep + 1);
           this.$store.commit("showLoaderChange", false);
         })

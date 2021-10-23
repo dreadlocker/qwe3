@@ -40,7 +40,6 @@ export default {
   methods: {
     changeStep(step, setAuth) {
       this.$store.commit("adminStepChange", step);
-      if (setAuth) this.$store.commit("onIsAuthChange", true);
     },
     deleteAllCategories() {
       const condition = confirm(

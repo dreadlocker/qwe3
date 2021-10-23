@@ -35,10 +35,12 @@ export default {
         },
       };
 
+      this.$store.commit("showLoaderChange", true);
       axios
         .get(`${BASE_API_URL}users`, params)
         .then(({ data }) => {
           this.$store.commit("adminStepChange", this.adminStep + 1);
+          this.$store.commit("showLoaderChange", false);
         })
         .catch((err) => {
           console.log(err);

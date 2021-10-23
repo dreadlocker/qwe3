@@ -1,11 +1,11 @@
 <template>
   <div class="wrapper">
     <h3>Добавяне на продукт</h3>
-    <label for="brandName">Име</label>
+    <label for="brandName">Марка</label>
     <input v-model="brandName" id="brandName" type="text" autofocus />
     <label for="price">Цена</label>
     <input v-model="price" id="price" type="text" />
-    <label for="image">Снимка</label>
+    <label for="image">Линк към снимка</label>
     <!-- <input
       ref="file"
       @change="previewFiles"
@@ -16,7 +16,7 @@
     <input v-model="imageUrl" id="image" type="text" name="image" />
     <label for="category" class="category-label">Категория</label>
     <Dropdown :hideText="true" id="category" />
-    <button @click.prevent="submit" class="btn">Създай</button>
+    <button @click.prevent.once="submit" class="btn">Създай</button>
     <button @click="goBack" class="btn">Назад</button>
   </div>
 </template>
@@ -43,14 +43,11 @@ export default {
   data() {
     return {
       filterAll: filterAll,
-      // category: "",
-      category: "Хладилници",
-      // brandName: "",
-      brandName: "a",
-      // price: "",
-      price: 1,
+      category: "",
+      brandName: "",
+      price: "",
       // image: "",
-      imageUrl: "imageUrl.imageUrl",
+      imageUrl: "",
     };
   },
   methods: {
@@ -90,6 +87,7 @@ export default {
       //   axios.post(`${BASE_API_URL}products`, this.image, configFormData),
       // ]);
 
+      this.$store.commit("showLoaderChange", true);
       axios
         .post(`${BASE_API_URL}products`, params.params, configUrlEncoded)
         .then(({ data }) => {
@@ -102,6 +100,7 @@ export default {
           // this.$store.commit("saveAllProducts", secondResponse.data);
           this.$store.commit("saveDropdownSelect", this.filterAll);
           this.$store.commit("saveAllProducts", data);
+          this.$store.commit("showLoaderChange", false);
           alert("Продуктът беше добавен");
         })
         .catch((err) => {

@@ -48,10 +48,12 @@ export default {
       );
 
       if (condition) {
+        this.$store.commit("showLoaderChange", true);
         axios
           .delete(`${BASE_API_URL}categories`)
           .then(({ data }) => {
             this.$store.commit("saveCategories", data);
+            this.$store.commit("showLoaderChange", false);
             alert("Всички категории бяха изтрити!");
           })
           .catch((err) => {

@@ -10,7 +10,7 @@ export default new Vuex.Store({
     allProducts: {},
     filteredProducts: [],
     dropdownValue: null,
-    isAuth: false,
+    isAuth: true,
     adminStep: 0,
     showLoader: true,
   },

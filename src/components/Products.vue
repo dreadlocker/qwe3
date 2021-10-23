@@ -21,7 +21,7 @@
                   :style="{
                     backgroundImage: `${
                       product.imageUrl
-                        ? `url(${baseURL}/${product.imageUrl})`
+                        ? `url(${product.imageUrl})`
                         : ''
                     }`,
                   }"
@@ -132,6 +132,7 @@ export default {
       );
 
       if (condition) {
+        this.$store.commit("showLoaderChange", true);
         axios
           .delete(`${BASE_API_URL}products/${productId}`)
           .then(() => {
@@ -140,7 +141,7 @@ export default {
             ].filter((product) => product._id !== productId);
             this.allProducts[category] = filteredProductsOnCategory;
             this.$store.commit("saveAllProducts", this.allProducts);
-
+            this.$store.commit("showLoaderChange", false);
             alert("Продуктът беше изтрит!");
           })
           .catch((err) => {

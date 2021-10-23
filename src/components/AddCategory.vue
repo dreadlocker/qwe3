@@ -37,11 +37,13 @@ export default {
         name: this.name,
       };
 
+      this.$store.commit("showLoaderChange", true);
       axios
         .post(`${BASE_API_URL}categories`, params, configUrlEncoded)
         .then(({ data }) => {
           this.name = "";
           this.$store.commit("saveCategories", data);
+          this.$store.commit("showLoaderChange", false);
           alert("Категорията беше добавена");
         })
         .catch((err) => {

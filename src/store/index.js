@@ -8,11 +8,18 @@ export default new Vuex.Store({
   state: {
     categories: [],
     allProducts: {},
-    filteredProducts: [],
+    filteredProducts: {},
     dropdownValue: null,
     isAuth: false,
     adminStep: 0,
     showLoader: true,
+  },
+  getters: {
+    hasSomeProducts(state) {
+      return Object.values(state.allProducts)
+        .map((productsByCategory) => productsByCategory.length > 0)
+        .some((bool) => bool);
+    },
   },
   mutations: {
     saveCategories(state, value) {

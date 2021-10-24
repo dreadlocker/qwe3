@@ -1,7 +1,7 @@
 <template>
   <div>
     <button @click="goBack" v-if="isAuth" class="back-btn">Назад</button>
-    <template v-if="hasSomeProducts">
+    <template v-if="hasSomeProducts && !showLoader">
       <div v-for="category in Object.keys(filteredProducts)" :key="category">
         <div>
           <hr />
@@ -20,9 +20,7 @@
                 <div
                   :style="{
                     backgroundImage: `${
-                      product.imageUrl
-                        ? `url(${product.imageUrl})`
-                        : ''
+                      product.imageUrl ? `url(${product.imageUrl})` : ''
                     }`,
                   }"
                   class="img"
@@ -32,7 +30,12 @@
                 <div v-if="isAuth" class="row-holder">
                   <div class="text-holder">Марка:</div>
                   <!-- TODO: when you edit 1 product it edits all of them -->
-                  <input v-model="brandName" class="inp-edit" type="text" />
+                  <input
+                    v-model="brandName"
+                    :placeholder="product.brandName"
+                    class="inp-edit"
+                    type="text"
+                  />
                 </div>
                 <div v-else>
                   <span>Марка: </span>
@@ -40,7 +43,12 @@
                 </div>
                 <div v-if="isAuth" class="row-holder">
                   <div class="text-holder">Цена:</div>
-                  <input v-model="price" class="inp-edit" type="number" />
+                  <input
+                    v-model="price"
+                    :placeholder="product.price"
+                    class="inp-edit"
+                    type="number"
+                  />
                 </div>
                 <div v-else>
                   <span class="text-holder">Цена: </span>
@@ -78,10 +86,10 @@
         </div>
       </div>
     </template>
-    <template v-else>
+    <!-- <template v-else>
       <h1>Сайтът се обновява.</h1>
       <h3>Моля, посетете ни по-късно.</h3>
-    </template>
+    </template> -->
     <div v-if="!isAuth" class="ghost-holder">
       <div @click="showLoginPage" class="ghost"></div>
     </div>
@@ -89,7 +97,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import axios from "axios";
 import _ from "lodash";
 import { BASE_API_URL } from "@/utils/helper.js";
@@ -104,14 +112,11 @@ export default {
       adminStep: (state) => state.adminStep,
       isAuth: (state) => state.isAuth,
       allProducts: (state) => state.allProducts,
+      showLoader: (state) => state.showLoader,
     }),
+    ...mapGetters(["hasSomeProducts"]),
     baseURL() {
       return baseURL;
-    },
-    hasSomeProducts() {
-      return Object.values(this.allProducts)
-        .map((productsByCategory) => productsByCategory.length > 0)
-        .some((bool) => bool);
     },
   },
   data() {

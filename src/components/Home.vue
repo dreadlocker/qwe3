@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Dropdown v-if="!adminStep && allProducts.length > 0" />
+    <Dropdown v-if="hasSomeProducts && adminStep === 0" />
     <Products v-if="adminStep === 0" />
     <Login v-if="adminStep === 1" />
     <CategoriesEdit v-if="isAuth && adminStep === 2" />
@@ -17,7 +17,7 @@ import Login from "@/components/Login.vue";
 import CategoriesEdit from "@/components/CategoriesEdit.vue";
 import AddCategory from "@/components/AddCategory.vue";
 import AddProduct from "@/components/AddProduct.vue";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "Home",
@@ -35,6 +35,7 @@ export default {
       allProducts: (state) => state.allProducts,
       isAuth: (state) => state.isAuth,
     }),
+    ...mapGetters(["hasSomeProducts"]),
   },
 };
 </script>

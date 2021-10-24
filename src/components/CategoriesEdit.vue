@@ -16,7 +16,7 @@
       </button>
     </div>
     <button @click="changeStep(0, true)" class="btn-edit">
-      Промяна на вече съществуващи елементи
+      Промяна на вече съществуващи продукти
     </button>
   </div>
 </template>

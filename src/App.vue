@@ -34,6 +34,7 @@ export default {
         .then(({ data }) => {
           const categories = data.data.map((category) => category.name);
           this.$store.commit("saveCategories", categories);
+          this.getProducts();
         })
         .catch((err) => {
           console.log(err);
@@ -54,18 +55,15 @@ export default {
 
           this.$store.commit("saveAllProducts", transformedProducts);
           this.$store.commit("saveFilteredProducts");
+          this.$store.commit("showLoaderChange", false);
         })
         .catch((err) => {
           console.log(err);
         });
     },
   },
-  async mounted() {
-    await this.getCategories();
-    await this.getProducts();
-    setTimeout(() => {
-      this.$store.commit("showLoaderChange", false);
-    }, 0);
+  mounted() {
+    this.getCategories();
   },
 };
 </script>

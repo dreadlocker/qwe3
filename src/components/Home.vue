@@ -32,7 +32,6 @@ export default {
   computed: {
     ...mapState({
       adminStep: (state) => state.adminStep,
-      allProducts: (state) => state.allProducts,
       isAuth: (state) => state.isAuth,
     }),
     ...mapGetters(["hasSomeProducts"]),

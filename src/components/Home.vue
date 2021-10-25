@@ -1,6 +1,7 @@
 <template>
   <div>
-    <Dropdown v-if="hasSomeProducts && adminStep === 0" />
+    <CategoriesDropdown v-if="isDropdownVisible" />
+    <OrderingDropdown v-if="isDropdownVisible" />
     <Products v-if="adminStep === 0" />
     <Login v-if="adminStep === 1" />
     <CategoriesEdit v-if="isAuth && adminStep === 2" />
@@ -11,7 +12,8 @@
 </template>
 
 <script>
-import Dropdown from "@/components/Dropdown.vue";
+import CategoriesDropdown from "@/components/CategoriesDropdown.vue";
+import OrderingDropdown from "@/components/OrderingDropdown.vue";
 import Products from "@/components/Products.vue";
 import Login from "@/components/Login.vue";
 import CategoriesEdit from "@/components/CategoriesEdit.vue";
@@ -22,7 +24,8 @@ import { mapState, mapGetters } from "vuex";
 export default {
   name: "Home",
   components: {
-    Dropdown,
+    CategoriesDropdown,
+    OrderingDropdown,
     Products,
     Login,
     CategoriesEdit,
@@ -35,6 +38,9 @@ export default {
       isAuth: (state) => state.isAuth,
     }),
     ...mapGetters(["hasSomeProducts"]),
+    isDropdownVisible() {
+      return this.hasSomeProducts && this.adminStep === 0;
+    },
   },
 };
 </script>

@@ -10,14 +10,14 @@
 <script>
 import axios from "axios";
 import { BASE_API_URL } from "@/utils/helper.js";
-import Dropdown from "@/components/Dropdown.vue";
+import CategoriesDropdown from "@/components/CategoriesDropdown.vue";
 import { mapState } from "vuex";
 import { configUrlEncoded } from "@/utils/helper.js";
 
 export default {
   name: "AddCategory",
   components: {
-    Dropdown,
+    CategoriesDropdown,
   },
   computed: {
     ...mapState({

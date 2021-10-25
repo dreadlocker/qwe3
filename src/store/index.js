@@ -9,10 +9,11 @@ export default new Vuex.Store({
     categories: [],
     allProducts: {},
     filteredProducts: {},
-    dropdownValue: null,
+    categoriesDropdownValue: null,
     isAuth: false,
     adminStep: 0,
     showLoader: true,
+    orderingDropdownValue: '',
   },
   getters: {
     hasSomeProducts(state) {
@@ -34,8 +35,8 @@ export default new Vuex.Store({
         }
       }
     },
-    saveDropdownSelect(state, value) {
-      state.dropdownValue = value
+    saveCategoriesDropdownSelect(state, value) {
+      state.categoriesDropdownValue = value
     },
     onIsAuthChange(state, value) {
       state.isAuth = value
@@ -48,6 +49,12 @@ export default new Vuex.Store({
     },
     saveAllProducts(state, value) {
       state.allProducts = value
+    },
+    saveOrderedFilteredProducts(state, value) {
+      state.filteredProducts = value
+    },
+    saveOrderingDropdownValue(state, value) {
+      state.orderingDropdownValue = value
     },
   },
   actions: {

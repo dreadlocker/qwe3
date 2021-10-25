@@ -15,7 +15,7 @@
     /> -->
     <input v-model="imageUrl" id="image" type="text" name="image" />
     <label for="category" class="category-label">Категория</label>
-    <Dropdown :hideText="true" id="category" />
+    <CategoriesDropdown :hideText="true" id="category" />
     <button @click.prevent="submit" class="btn">Създай</button>
     <button @click="goBack" class="btn">Назад</button>
   </div>
@@ -24,7 +24,7 @@
 <script>
 import axios from "axios";
 import { BASE_API_URL } from "@/utils/helper.js";
-import Dropdown from "@/components/Dropdown.vue";
+import CategoriesDropdown from "@/components/CategoriesDropdown.vue";
 import { mapState } from "vuex";
 import { filterAll } from "@/assets/constants.js";
 import { configUrlEncoded } from "@/utils/helper.js";
@@ -32,12 +32,12 @@ import { configUrlEncoded } from "@/utils/helper.js";
 export default {
   name: "AddProduct",
   components: {
-    Dropdown,
+    CategoriesDropdown,
   },
   computed: {
     ...mapState({
       adminStep: (state) => state.adminStep,
-      dropdownValue: (state) => state.dropdownValue,
+      categoriesDropdownValue: (state) => state.categoriesDropdownValue,
     }),
   },
   data() {
@@ -56,8 +56,8 @@ export default {
     },
     async submit(e) {
       if (
-        this.dropdownValue === this.filterAll ||
-        !this.dropdownValue ||
+        this.categoriesDropdownValue === this.filterAll ||
+        !this.categoriesDropdownValue ||
         !this.brandName ||
         !this.price ||
         !this.imageUrl
@@ -75,7 +75,7 @@ export default {
 
       const params = {
         params: {
-          category: this.dropdownValue,
+          category: this.categoriesDropdownValue,
           brandName: this.brandName,
           price: price,
           imageUrl: this.imageUrl,
@@ -98,7 +98,7 @@ export default {
           // this.image = "";
           // this.$refs.file.value = "";
           // this.$store.commit("saveAllProducts", secondResponse.data);
-          this.$store.commit("saveDropdownSelect", this.filterAll);
+          this.$store.commit("saveCategoriesDropdownSelect", this.filterAll);
           this.$store.commit("saveAllProducts", data);
           this.$store.commit("showLoaderChange", false);
           alert("Продуктът беше добавен");

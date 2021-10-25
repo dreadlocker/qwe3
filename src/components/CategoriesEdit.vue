@@ -5,7 +5,7 @@
       {{ `${item} | ` }}
     </span>
     <h3>Проверете дали вашият тип уред го има в падащото меню с категории</h3>
-    <Dropdown :hideText="true" />
+    <CategoriesDropdown :hideText="true" />
     <div class="btns-holder">
       <div>
         <button @click="changeStep(3)" class="btn">Няма го</button>
@@ -24,13 +24,13 @@
 <script>
 import axios from "axios";
 import { BASE_API_URL } from "@/utils/helper.js";
-import Dropdown from "@/components/Dropdown.vue";
+import CategoriesDropdown from "@/components/CategoriesDropdown.vue";
 import { mapState } from "vuex";
 
 export default {
   name: "CategoriesEdit",
   components: {
-    Dropdown,
+    CategoriesDropdown,
   },
   data() {
     return {

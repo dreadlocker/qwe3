@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <label v-if="!hideText" for="products" class="label"
-      >Филтър за протукти:
+      >Филтър по категория:
     </label>
     <select
       @change="onChange($event)"
